@@ -1,17 +1,25 @@
-# app.py
-
 import streamlit as st
 import os
 import base64
 
 # Import SolidPython modules
-from solid import text as solid_text, linear_extrude, cube, translate
-from solid.utils import scad_render_to_file
-from solid import scad_render
+from solid import text as solid_text, linear_extrude, cube, translate, scad_render
 
+# Function to generate the 3D model using SolidPython and save as a .scad file
 def generate_solidpython_model(input_text, font, size, height, thickness, output_dir="output_solidpython"):
     """
     Generates a 3D model using SolidPython and saves it as a .scad file.
+
+    Args:
+        input_text (str): The text to extrude into 3D.
+        font (str): The font to use for the text.
+        size (float): The size of the text.
+        height (float): The extrusion height of the text.
+        thickness (float): The thickness of the base.
+        output_dir (str): The directory to save the .scad file.
+
+    Returns:
+        str: The path to the generated .scad file.
     """
     # Create text object
     txt = linear_extrude(height=height)(
@@ -21,16 +29,29 @@ def generate_solidpython_model(input_text, font, size, height, thickness, output
     base = cube([size * len(input_text) * 0.6, size, thickness])
     # Combine text and base
     model = txt + translate([0, 0, thickness])(base)
+
     # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
     scad_file = os.path.join(output_dir, "text_model.scad")
-    # Render to SCAD file
-    scad_render_to_file(model, scad_file, file_header='$fn = 100;')
+
+    # Render the model to SCAD format and write it to the file
+    with open(scad_file, 'w') as f:
+        f.write(scad_render(model))
+
     return scad_file
 
+# Function to generate a download link for the .scad file
 def get_download_link(file_path, file_name, mime_type):
     """
-    Generates a download link for the given file.
+    Generates a download link for a given file.
+
+    Args:
+        file_path (str): The path to the file.
+        file_name (str): The name of the file.
+        mime_type (str): The MIME type of the file.
+
+    Returns:
+        str: HTML anchor link for downloading the file.
     """
     with open(file_path, "rb") as f:
         bytes_data = f.read()
@@ -38,7 +59,7 @@ def get_download_link(file_path, file_name, mime_type):
     href = f'<a href="data:{mime_type};base64,{b64}" download="{file_name}">Download {file_name}</a>'
     return href
 
-# Streamlit App
+# Main Streamlit app
 def main():
     st.set_page_config(page_title="Text to 3D CAD Generator", layout="wide")
     st.title("📄 Text to 3D CAD File Generator")
