@@ -7,6 +7,7 @@ import base64
 # Import SolidPython modules
 from solid import text as solid_text, linear_extrude, cube, translate
 from solid.utils import scad_render_to_file
+from solid import scad_render
 
 def generate_solidpython_model(input_text, font, size, height, thickness, output_dir="output_solidpython"):
     """
