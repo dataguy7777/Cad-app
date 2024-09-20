@@ -8,11 +8,6 @@ import base64
 from solid import text as solid_text, linear_extrude, cube, translate
 from solid.utils import scad_render_to_file
 
-# Placeholder imports for Blender and FreeCAD
-# These are commented out because integrating bpy and FreeCAD APIs requires proper setup
-# import bpy
-# import FreeCAD, Part, Draft
-
 def generate_solidpython_model(input_text, font, size, height, thickness, output_dir="output_solidpython"):
     """
     Generates a 3D model using SolidPython and saves it as a .scad file.
@@ -31,50 +26,6 @@ def generate_solidpython_model(input_text, font, size, height, thickness, output
     # Render to SCAD file
     scad_render_to_file(model, scad_file, file_header='$fn = 100;')
     return scad_file
-
-# def generate_blender_model(input_text, font, size, extrude, output_dir="output_blender"):
-#     """
-#     Generates a 3D model using Blender's bpy API and saves it as an STL file.
-#     """
-#     # Clear existing objects
-#     bpy.ops.object.select_all(action='SELECT')
-#     bpy.ops.object.delete(use_global=False)
-    
-#     # Create text object
-#     bpy.ops.object.text_add(location=(0, 0, 0))
-#     text_obj = bpy.context.active_object
-#     text_obj.data.body = input_text
-#     text_obj.data.font = bpy.data.fonts.get(font, bpy.data.fonts['Bfont'])
-#     text_obj.data.size = size
-#     text_obj.data.extrude = extrude
-    
-#     # Export to STL
-#     os.makedirs(output_dir, exist_ok=True)
-#     stl_file = os.path.join(output_dir, "text_model.stl")
-#     bpy.ops.export_mesh.stl(filepath=stl_file)
-#     return stl_file
-
-# def generate_freecad_model(input_text, font, size, height, output_dir="output_freecad"):
-#     """
-#     Generates a 3D model using FreeCAD's API and saves it as an STL file.
-#     """
-#     # Initialize FreeCAD document
-#     doc = FreeCAD.newDocument("TextModel")
-    
-#     # Create text object
-#     text = Draft.makeText(input_text, point=FreeCAD.Vector(0,0,0), font=font, size=size)
-#     shape = text.Shape
-#     part = shape.extrude(FreeCAD.Vector(0, 0, height))
-    
-#     # Add part to document
-#     part_obj = doc.addObject("Part::Feature", "TextExtrusion")
-#     part_obj.Shape = part
-    
-#     # Export to STL
-#     os.makedirs(output_dir, exist_ok=True)
-#     stl_file = os.path.join(output_dir, "text_model.stl")
-#     Part.export([part_obj], stl_file)
-#     return stl_file
 
 def get_download_link(file_path, file_name, mime_type):
     """
