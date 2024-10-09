@@ -1,7 +1,6 @@
 streamlit
 cadquery
-jupyter-cadquery
-pythreejs
+streamlit-stl-viewer
 numpy
 pyvista
 trimesh
