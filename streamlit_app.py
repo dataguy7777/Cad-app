@@ -1,6 +1,8 @@
 import streamlit as st
 import cadquery as cq
-from streamlit_stl_viewer import stl_viewer  # Ensure this matches the actual package name
+import trimesh
+import plotly.graph_objects as go
+from io import BytesIO
 
 # Function to generate the quadcopter frame
 def create_quadcopter_frame(arm_length, arm_width, body_size, motor_mount_diameter):
@@ -29,6 +31,33 @@ def create_quadcopter_frame(arm_length, arm_width, body_size, motor_mount_diamet
 
     return body
 
+# Function to convert STL to Plotly mesh
+def plotly_mesh(stl_path):
+    mesh = trimesh.load_mesh(stl_path)
+    vertices = mesh.vertices
+    faces = mesh.faces
+
+    x, y, z = vertices.T
+    i, j, k = faces.T
+
+    fig = go.Figure(data=[
+        go.Mesh3d(
+            x=x, y=y, z=z,
+            i=i, j=j, k=k,
+            color='lightblue',
+            opacity=0.50
+        )
+    ])
+
+    fig.update_layout(scene=dict(
+        xaxis_title='X',
+        yaxis_title='Y',
+        zaxis_title='Z',
+        aspectmode='data'
+    ))
+
+    return fig
+
 def main():
     st.title('Parametric Quadcopter Frame Generator')
 
@@ -44,12 +73,13 @@ def main():
 
     # Export model as STL
     stl_path = "/tmp/quadcopter_frame.stl"
-    frame_val = frame.val()  # Get the underlying CadQuery object
+    frame_val = frame.val()
     frame_val.exportStl(stl_path)
 
-    # Display the 3D model in the Streamlit app using STL viewer
+    # Display the 3D model using Plotly
     st.header("3D Model Preview")
-    stl_viewer(stl_path)
+    fig = plotly_mesh(stl_path)
+    st.plotly_chart(fig, use_container_width=True)
 
     # Provide a download button for the STL file
     with open(stl_path, "rb") as f:
@@ -61,4 +91,4 @@ def main():
         )
 
 if __name__ == "__main__":
-        main()
+    main()
