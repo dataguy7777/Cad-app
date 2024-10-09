@@ -1,2 +1,7 @@
 streamlit
-solidpython
+cadquery
+jupyter-cadquery
+pythreejs
+numpy
+pyvista
+trimesh
